@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Inverter</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="flex items-center justify-center h-screen bg-gray-100">
+    <div class="bg-white p-8 rounded shadow-md">
+        <h1 class="text-2xl font-bold mb-4">Invert PDF Color to Black & White</h1>
+        <form id="uploadForm" enctype="multipart/form-data">
+            <input type="file" name="pdf" accept="application/pdf" required class="mb-4">
+            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Upload PDF</button>
+        </form>
+        <div id="loading" class="hidden mt-4">Processing...</div>
+    </div>
+    <script>
+        document.getElementById('uploadForm').onsubmit = async (e) => {
+            e.preventDefault();
+            document.getElementById('loading').classList.remove('hidden');
+            const formData = new FormData(e.target);
+            const response = await fetch('/upload', {
+                method: 'POST',
+                body: formData
+            });
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'inverted.pdf';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            document.getElementById('loading').classList.add('hidden');
+        };
+    </script>
+</body>
+</html>
